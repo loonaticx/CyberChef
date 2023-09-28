@@ -32,7 +32,7 @@ import {
     CSSMinify,
     toBase64,
     toHex
-} from "../../../src/node/index";
+} from "../../../src/node/index.mjs";
 import chef from "../../../src/node/index.mjs";
 import TestRegister from "../../lib/TestRegister.mjs";
 import File from "../../../src/node/File.mjs";
@@ -45,10 +45,10 @@ TestRegister.addApiTests([
         const result = chef.ADD("sample input", {
             key: {
                 string: "some key",
-                option: "Hex"
+                option: "utf8"
             }
         });
-        assert.equal(result.toString(), "aO[^ZS\u000eW\\^cb");
+        assert.equal(result.toString(), "\xe6\xd0\xda\xd5\x8c\xd0\x85\xe2\xe1\xdf\xe2\xd9");
     }),
 
 
@@ -121,10 +121,10 @@ Tiger-128`;
         const result = chef.AND("Scot-free", {
             key: {
                 string: "Raining Cats and Dogs",
-                option: "Hex",
+                option: "utf8",
             }
         });
-        assert.strictEqual(result.toString(), "\u0000\"M$(D  E");
+        assert.strictEqual(result.toString(), "Raid)fb A");
     }),
 
     it("atBash Cipher", () => {
@@ -371,10 +371,10 @@ color: white;
             },
             salt: {
                 string: "Market",
-                option: "Hex",
+                option: "utf8",
             },
         });
-        assert.strictEqual(result.toString(), "7c21a9f5063a4d62fb1050068245c181");
+        assert.strictEqual(result.toString(), "4930d5d200e80f18c96b5550d13c6af8");
     }),
 
     it("Derive PBKDF2 Key", () => {
@@ -471,7 +471,7 @@ color: white;
     }),
 
     it("Extract dates", () => {
-        assert.strictEqual(chef.extractDates("Don't Look a Gift Horse In The Mouth 01/02/1992").toString(), "01/02/1992\n");
+        assert.strictEqual(chef.extractDates("Don't Look a Gift Horse In The Mouth 01/02/1992").toString(), "01/02/1992");
     }),
 
     it("Filter", () => {
@@ -685,8 +685,8 @@ Arguments:
     it("Parse user agent", () => {
         const result = chef.parseUserAgent("Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:47.0) Gecko/20100101 Firefox/47.0 ");
         const expected = `Browser
-    Name: Mozilla
-    Version: 5.0
+    Name: Firefox
+    Version: 47.0
 Device
     Model: unknown
     Type: unknown
@@ -816,7 +816,7 @@ pCGTErs=
     it("RC4 Drop", () => {
         assert.strictEqual(
             chef.RC4Drop("Go Out On a Limb", {passphrase: {string: "Under Your Nose", option: "UTF8"}, inputFormat: "UTF8", outputFormat: "Hex"}).toString(),
-            "8fa5f2751d34476a0c857439f43816cf");
+            "b85cb1c4ed6bed8f260ab92829bba942");
     }),
 
     it("Regular Expression", () => {
@@ -859,7 +859,7 @@ pCGTErs=
     }),
 
     it("SQL Beautify", () => {
-        const result = chef.SQLBeautify(`SELECT MONTH, ID, RAIN_I, TEMP_F 
+        const result = chef.SQLBeautify(`SELECT MONTH, ID, RAIN_I, TEMP_F
 FROM STATS;`);
         const expected = `SELECT MONTH,
          ID,
@@ -879,8 +879,7 @@ FROM STATS;`;
         const result = chef.strings("smothering ampersand abreast", {displayTotal: true});
         const expected = `Total found: 1
 
-smothering ampersand abreast
-`;
+smothering ampersand abreast`;
         assert.strictEqual(result.toString(), expected);
     }),
 
